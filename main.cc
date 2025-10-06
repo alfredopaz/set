@@ -67,6 +67,12 @@ int main() {
   std::cout << "\nTodas las pruebas de axiomas superadas exitosamente.\n";
   std::cout << "--------------------------------\n";
 
+  std::cerr << "\n--- Demostración de destructores virtuales ---\n";
+  ISet* s = new ArraySet(4);
+  s->insert(10);
+  s->insert(20);
+  delete s;
+
   return 0;
 }
 
