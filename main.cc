@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cassert>
 #include "ArraySet.h"
+void expectEmpty(const ArraySet& s, const char* label) {
+  std::cerr << label << ": " << (s.isEmpty() ? "OK": "ERROR") << "\n";
+}
 
 int main() {
   std::cout << "Pruebas del TDA Set (ArraySet)\n";
@@ -63,16 +66,25 @@ int main() {
     assert(!s.contains(1));
     assert(s.contains(2));
   }
-
+  
   std::cout << "\nTodas las pruebas de axiomas superadas exitosamente.\n";
   std::cout << "--------------------------------\n";
 
-  std::cerr << "\n--- Demostración de destructores virtuales ---\n";
-  ISet* s = new ArraySet(4);
-  s->insert(10);
-  s->insert(20);
-  delete s;
+  {
+    std::cerr << "\n--- Demostración de destructores virtuales ---\n";
+    ISet* s = new ArraySet(4);
+    s->insert(10);
+    s->insert(20);
+    delete s;
+  }
 
+  {
+    ArraySet s(4);
+    s.insert(42); // s NO está vacío
+
+    expectEmpty(s,   "control (debería FALLAR)");
+    expectEmpty(1,   "conversión implicita no deseada");
+  }
   return 0;
 }
 

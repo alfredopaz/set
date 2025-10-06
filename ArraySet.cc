@@ -1,6 +1,5 @@
 #include "ArraySet.h"
 #include <cassert>
-#include <iostream> //sólo para depuración
 
 ArraySet::ArraySet(int capacity)
   : data(0), cap(capacity), nextFree(0) {
@@ -10,7 +9,6 @@ ArraySet::ArraySet(int capacity)
 }
 
 ArraySet::~ArraySet() {
-  std::cerr << "ArraySet::~ArraySet\n";
   delete[] data;
 }
 
