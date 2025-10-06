@@ -1,8 +1,9 @@
+
 CXX      = g++
 CXXFLAGS = -Wall -std=c++11
 TARGET   = set
-SRC      = main.cc ArraySet.cc
-OBJ      = main.o ArraySet.o
+SRC      = main.cc
+OBJ      = main.o
 
 # regla general
 all: $(TARGET)
@@ -10,12 +11,9 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# dependencias manuales
+# dependencias
 main.o: main.cc ISet.h ArraySet.h
 	$(CXX) $(CXXFLAGS) -c main.cc
-
-ArraySet.o: ArraySet.cc ArraySet.h ISet.h
-	$(CXX) $(CXXFLAGS) -c ArraySet.cc
 
 run: $(TARGET)
 	./$(TARGET)

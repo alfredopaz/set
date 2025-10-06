@@ -1,12 +1,13 @@
 #ifndef ISET_H
 #define ISET_H
 
+template <typename T>
 class ISet {
   public:
-    virtual ~ISet(){}
-    virtual void insert(int) = 0;
-    virtual void remove(int) = 0;
-    virtual bool contains(int) const = 0;
+    virtual ~ISet() = default;
+    virtual void insert(const T&) = 0;
+    virtual void remove(const T&) = 0;
+    virtual bool contains(const T&) const = 0;
     virtual bool isEmpty() const = 0;
 };
 
