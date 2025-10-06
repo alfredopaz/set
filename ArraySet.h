@@ -11,7 +11,7 @@ class ArraySet : public ISet {
 
   public:
     ArraySet(int capacity);
-    ~ArraySet();
+    ~ArraySet() override;
 
     void insert(int value) override; //garantiza que estamos redefiniendo
                                      //un método y no creando uno nuevo
