@@ -10,7 +10,7 @@ class ArraySet : public ISet {
     int nextFree;
 
   public:
-    ArraySet(int capacity);
+    explicit ArraySet(int capacity);
     ~ArraySet() override;
 
     void insert(int value) override; //garantiza que estamos redefiniendo
