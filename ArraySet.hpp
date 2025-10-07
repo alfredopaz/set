@@ -5,31 +5,33 @@
 #include <cassert>
 
 // Versión template, definiciones "en línea" dentro de la clase.
-template <typename T>
+template <class T, std::size_t N>
 class ArraySet : public ISet<T> {
-private:
   T* data;
-  int cap;
+  std::size_t cap;
   int nextFree;
 
 public:
-  explicit ArraySet(int capacity) : data(nullptr), cap(capacity), nextFree(0) {
+  explicit ArraySet(std::size_t capacity) :
+    data(nullptr),
+    cap(capacity),
+    nextFree(0) {
     assert(cap > 0);
     data = new T[cap];
   }
 
-  ~ArraySet() override {
+  virtual ~ArraySet() override {
     delete[] data;
   }
 
-  void insert(const T& value) override {
+  virtual void insert(const T& value) override {
     if (contains(value))
       return;
     assert(nextFree < cap);
     data[nextFree++] = value;
   }
 
-  void remove(const T& value) override {
+  virtual void remove(const T& value) override {
     int idx = -1;
     for (int i = 0; i < nextFree; ++i)
       if (data[i] == value) {
@@ -45,7 +47,7 @@ public:
     --nextFree;
   }
 
-  bool contains(const T& value) const override {
+  virtual bool contains(const T& value) const override {
     for (int i = 0; i < nextFree; ++i)
       if (data[i] == value)
         return true;
@@ -53,7 +55,7 @@ public:
     return false;
   }
 
-  bool isEmpty() const override {
+  virtual bool isEmpty() const override {
     return nextFree == 0;
   }
 };
