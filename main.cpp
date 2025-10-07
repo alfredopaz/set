@@ -1,7 +1,6 @@
-
-#include <iostream>
+#include "ArraySet.hpp"
 #include <cassert>
-#include "ArraySet.h"
+#include <iostream>
 
 void expectEmpty(const ArraySet<int>& s, const char* label) {
   std::cerr << label << ": " << (s.isEmpty() ? "OK" : "ERROR") << "\n";
@@ -30,7 +29,8 @@ int main() {
   // A8: insert(insert(S, x), x) == insert(S, x)
   {
     ArraySet<int> s(5);
-    std::cout << "A8: insertar dos veces el mismo elemento no cambia el conjunto...\n";
+    std::cout
+      << "A8: insertar dos veces el mismo elemento no cambia el conjunto...\n";
     s.insert(4);
     s.insert(4); // duplicado
     assert(s.contains(4));
@@ -60,11 +60,11 @@ int main() {
   {
     ArraySet<int> s(5);
     std::cout << "Secuencia combinada: inserción, duplicado y eliminación...\n";
-    s.insert(1);   // A2
-    s.insert(1);   // A8
+    s.insert(1); // A2
+    s.insert(1); // A8
     s.insert(2);
-    s.remove(1);   // A4
-    s.remove(3);   // A7
+    s.remove(1); // A4
+    s.remove(3); // A7
     assert(!s.contains(1));
     assert(s.contains(2));
   }
