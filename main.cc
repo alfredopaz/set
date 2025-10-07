@@ -4,9 +4,11 @@
 #include "ArraySet.h"
 #include "Persona.h"
 
-void expectEmpty(const ArraySet<int>& s, const char* label) {
-  std::cerr << label << ": " << (s.isEmpty() ? "OK" : "ERROR") << "\n";
-}
+struct IgualPorDni {
+  bool operator()(const Persona& a, const Persona& b) const {
+    return a.dni == b.dni;
+  }
+};
 
 int main() {
   std::cout << "Pruebas del TDA Set (ArraySet)\n";
@@ -74,7 +76,7 @@ int main() {
   std::cout << "--------------------------------\n";
 
   {
-    ArraySet<Persona> s(5);   // usa == por defecto dentro de ArraySet
+    ArraySet<Persona, IgualPorDni> s(5); // Usa el functor
     s.insert({"70234567","Jorge Gonzales"});
     if(s.contains({"70234567","ANA PEREZ"}))
       std::cerr << "EXISTE\n";

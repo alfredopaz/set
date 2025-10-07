@@ -5,16 +5,17 @@
 #include "ISet.h"
 
 // Versión template, definiciones "en línea" dentro de la clase.
-template <typename T>
+template <typename T, typename Eq = std::equal_to<T>>
 class ArraySet : public ISet<T> {
 private:
   T*  data;
   int cap;
   int nextFree;
+  Eq eq;
 
 public:
   explicit ArraySet(int capacity)
-    : data(nullptr), cap(capacity), nextFree(0) {
+    : data(nullptr), cap(capacity), nextFree(0), eq() {
     assert(cap > 0);
     data = new T[cap];
   }
@@ -32,7 +33,7 @@ public:
   void remove(const T& value) override {
     int idx = -1;
     for (int i = 0; i < nextFree; ++i) 
-      if (data[i] == value) { idx = i; break; }
+      if (eq(data[i], value)) { idx = i; break; }
     
     if (idx < 0) return;
     for (int i = idx + 1; i < nextFree; ++i) 
@@ -43,7 +44,7 @@ public:
 
   bool contains(const T& value) const override {
     for (int i = 0; i < nextFree; ++i) 
-      if (data[i] == value) return true;
+      if (eq(data[i], value)) return true;
     
     return false;
   }
