@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include "ArraySet.h"
+#include "Persona.h"
 
 void expectEmpty(const ArraySet<int>& s, const char* label) {
   std::cerr << label << ": " << (s.isEmpty() ? "OK" : "ERROR") << "\n";
@@ -72,5 +73,13 @@ int main() {
   std::cout << "\nTodas las pruebas de axiomas superadas exitosamente.\n";
   std::cout << "--------------------------------\n";
 
+  {
+    ArraySet<Persona> s(5);   // usa == por defecto dentro de ArraySet
+    s.insert({"70234567","Jorge Gonzales"});
+    if(s.contains({"70234567","ANA PEREZ"}))
+      std::cerr << "EXISTE\n";
+    else
+      std::cerr << "NO existe\n";
+  }
   return 0;
 }
