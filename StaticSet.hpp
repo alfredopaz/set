@@ -1,33 +1,26 @@
-#ifndef ARRAYSET_H
-#define ARRAYSET_H
+#ifndef STATIC_SET_HPP
+#define STATIC_SET_HPP
 
 #include "ISet.hpp"
 #include <cassert>
 
-// Versión template, definiciones "en línea" dentro de la clase.
-template <class T>
-class ArraySet : public ISet<T> {
-  T* data;
-  std::size_t cap;
-  int nextFree;
+template <class T, std::size_t N>
+class StaticSet : public ISet<T> {
+  // this is potentially dangerous, it calls the default constructor for every
+  // element of the array, even if T has a default constructor, this is
+  // wasteful, we should initialize memory manually upon insertion (and
+  // uninitialize upon deletion)
+  T data[N];
+  std::size_t nextFree;
 
 public:
-  explicit ArraySet(std::size_t capacity) :
-    data(nullptr),
-    cap(capacity),
-    nextFree(0) {
-    assert(cap > 0);
-    data = new T[cap];
-  }
-
-  virtual ~ArraySet() override {
-    delete[] data;
-  }
+  explicit StaticSet(std::size_t capacity) : nextFree(0) {}
+  virtual ~StaticSet() override = default;
 
   virtual void insert(const T& value) override {
     if (contains(value))
       return;
-    assert(nextFree < cap);
+    assert(nextFree < N);
     data[nextFree++] = value;
   }
 
@@ -51,7 +44,6 @@ public:
     for (int i = 0; i < nextFree; ++i)
       if (data[i] == value)
         return true;
-
     return false;
   }
 
