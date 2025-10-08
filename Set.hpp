@@ -6,7 +6,7 @@
 #include <utility>
 
 template <class S, class T>
-concept Set = std::default_initializable<S> && requires(S& s, const T& t) {
+concept Set = requires(S& s, const T& t) {
   { s.insert(t) };
   { s.erase(t) };
   { std::as_const(s).contains(t) } -> std::same_as<bool>;
@@ -33,9 +33,11 @@ class DynSet {
   const VTable* v_table;
 
 public:
-  template <Set<T> S>
-  DynSet(S&& t) :
-    set(new S(std::forward<S>(t)), [](void* ptr) { delete ((S*)ptr); }),
+  template <Set<T> S, class... Args>
+  DynSet(std::in_place_type_t<S>, Args&&... args) :
+    set(
+      new S(std::forward<Args>(args)...), [](void* ptr) { delete ((S*)ptr); }
+    ),
     v_table(&V_TABLE<S>) {}
 
   void insert(const T& t) {
@@ -50,8 +52,6 @@ public:
   bool empty() const {
     return v_table->empty(set.get());
   }
-
-  static_assert(Set<DynSet<T>, T>, "DynSet must satisfy Set");
 };
 
 #endif

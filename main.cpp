@@ -5,12 +5,13 @@
 #include <cassert>
 #include <iostream>
 #include <set>
+#include <utility>
 
-template <Set<int> T>
-void test() {
+template <Set<int> T, class... Args>
+void test(Args&&... args) {
   // A1: in(init(), x) == false
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout << "A1: conjunto recién creado debe estar vacío...\n";
     assert(s.empty());
     assert(!s.contains(10));
@@ -18,7 +19,7 @@ void test() {
 
   // A2: in(insert(S, x), x) == true
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout << "A2: insertar un elemento debe hacerlo perteneciente...\n";
     s.insert(7);
     assert(s.contains(7));
@@ -26,7 +27,7 @@ void test() {
 
   // A8: insert(insert(S, x), x) == insert(S, x)
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout
       << "A8: insertar dos veces el mismo elemento no cambia el conjunto...\n";
     s.insert(4);
@@ -38,7 +39,7 @@ void test() {
 
   // A4: in(erase(S, x), x) == false
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout << "A4: eliminar un elemento lo hace no perteneciente...\n";
     s.insert(3);
     s.erase(3);
@@ -47,7 +48,7 @@ void test() {
 
   // A7: erase(init(), x) == init()
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout << "A7: eliminar en conjunto vacío no altera el estado...\n";
     assert(s.empty());
     s.erase(9);
@@ -56,7 +57,7 @@ void test() {
 
   // Secuencia combinada (integración de varios axiomas)
   {
-    T s;
+    T s(std::forward<Args>(args)...);
     std::cout << "Secuencia combinada: inserción, duplicado y eliminación...\n";
     s.insert(1); // A2
     s.insert(1); // A8
@@ -87,6 +88,14 @@ int main() {
   std::cout << "Pruebas del TDA Set (std::set)\n";
   std::cout << "--------------------------------\n";
   test<std::set<int>>();
+
+  test<DynSet<int>>(std::in_place_type<StaticSet<int, 5>>);
+  test<DynSet<int>>(std::in_place_type<ArraySet<int>>);
+  test<DynSet<int>>(std::in_place_type<BstSet<int>>);
+  // DynSet satisfies Set :D
+  test<DynSet<int>>(
+    std::in_place_type<DynSet<int>>, std::in_place_type<BstSet<int>>
+  );
 
   return 0;
 }
