@@ -7,20 +7,22 @@
 template <class T, std::size_t N>
 class StaticSet : public ISet<T> {
   // this is potentially dangerous, it calls the default constructor for every
-  // element of the array, even if T has a default constructor, this is
+  // element of the array. even if T has a default ctor, this is
   // wasteful, we should initialize memory manually upon insertion (and
-  // uninitialize upon deletion)
+  // uninitialize upon deletion) using something like:
+  // alignas(T) unsigned char data[N * sizeof(T)];
   T data[N];
   std::size_t nextFree;
 
 public:
-  explicit StaticSet() : nextFree(0) {}
+  StaticSet() : nextFree(0) {}
   virtual ~StaticSet() override = default;
 
   virtual void insert(const T& value) override {
     if (contains(value))
       return;
     assert(nextFree < N);
+    // new (&data[nextFree++]) T(value);
     data[nextFree++] = value;
   }
 
@@ -38,6 +40,7 @@ public:
       data[i - 1] = data[i];
 
     --nextFree;
+    // data[i].~T();
   }
 
   virtual bool contains(const T& value) const override {
@@ -52,4 +55,4 @@ public:
   }
 };
 
-#endif // ARRAYSET_H
+#endif

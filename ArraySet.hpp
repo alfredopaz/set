@@ -4,6 +4,8 @@
 #include "ISet.hpp"
 #include <cassert>
 
+// this has much of the same problems as StaticSet, look there for more info
+
 // Versión template, definiciones "en línea" dentro de la clase.
 template <class T>
 class ArraySet : public ISet<T> {
@@ -60,4 +62,4 @@ public:
   }
 };
 
-#endif // ARRAYSET_H
+#endif

@@ -1,6 +1,7 @@
 #ifndef ISET_H
 #define ISET_H
 
+// As it stands, this interface can't work for move-only types
 template <class T>
 struct ISet {
   virtual ~ISet() = default;
