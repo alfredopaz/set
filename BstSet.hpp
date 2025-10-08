@@ -17,23 +17,21 @@ class BstSet : public ISet<T> {
   std::unique_ptr<Node> root;
 
 public:
-  BstSet() = default;
-  virtual ~BstSet() override = default;
   virtual void insert(const T& value) override {
-    // sometimes raw pointers are truly inevitable
+    // sometimes raw pointers to pointers are truly inevitable
     auto* current = &root;
-    while (*current) {
+    while (*current)
       if (value < (*current)->val)
         current = &(*current)->left;
       else if (value > (*current)->val)
         current = &(*current)->right;
       else
         return; // already here
-    }
+
     *current = std::make_unique<Node>(value);
   }
 
-  void remove(const T& value) override {
+  virtual void remove(const T& value) override {
     auto* current = &root;
     while (*current)
       if (value < (*current)->val)
