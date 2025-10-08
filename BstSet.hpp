@@ -46,12 +46,16 @@ public:
     if (!*current)
       return;
 
+    // no children
     if (!(*current)->left && !(*current)->right)
       current->reset();
+    // only right
     else if (!(*current)->left)
       *current = std::move((*current)->right);
+    // only left
     else if (!(*current)->right)
       *current = std::move((*current)->left);
+    // parent of succesor
     else if (!(*current)->right->left) {
       (*current)->right->left = std::move((*current)->left);
       *current = std::move((*current)->right);
