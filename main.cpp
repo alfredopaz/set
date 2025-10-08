@@ -1,14 +1,20 @@
 #include "ArraySet.hpp"
 #include "BstSet.hpp"
+#include "ISet.hpp"
 #include "StaticSet.hpp"
 #include <cassert>
 #include <iostream>
+#include <type_traits>
 
-template <class Set>
+template <class T>
 void test() {
+  // Compile time check, SFINAE isn't cool kids, but until C++ 20 there isn't
+  // anything better (search for C++ concepts)
+  static_assert(std::is_base_of<ISet<int>, T>::value, "T must implement ISet");
+
   // A1: in(init(), x) == false
   {
-    Set s;
+    T s;
     std::cout << "A1: conjunto recién creado debe estar vacío...\n";
     assert(s.isEmpty());
     assert(!s.contains(10));
@@ -16,7 +22,7 @@ void test() {
 
   // A2: in(insert(S, x), x) == true
   {
-    Set s;
+    T s;
     std::cout << "A2: insertar un elemento debe hacerlo perteneciente...\n";
     s.insert(7);
     assert(s.contains(7));
@@ -24,7 +30,7 @@ void test() {
 
   // A8: insert(insert(S, x), x) == insert(S, x)
   {
-    Set s;
+    T s;
     std::cout
       << "A8: insertar dos veces el mismo elemento no cambia el conjunto...\n";
     s.insert(4);
@@ -36,7 +42,7 @@ void test() {
 
   // A4: in(remove(S, x), x) == false
   {
-    Set s;
+    T s;
     std::cout << "A4: eliminar un elemento lo hace no perteneciente...\n";
     s.insert(3);
     s.remove(3);
@@ -45,7 +51,7 @@ void test() {
 
   // A7: remove(init(), x) == init()
   {
-    Set s;
+    T s;
     std::cout << "A7: eliminar en conjunto vacío no altera el estado...\n";
     assert(s.isEmpty());
     s.remove(9);
@@ -54,7 +60,7 @@ void test() {
 
   // Secuencia combinada (integración de varios axiomas)
   {
-    Set s;
+    T s;
     std::cout << "Secuencia combinada: inserción, duplicado y eliminación...\n";
     s.insert(1); // A2
     s.insert(1); // A8
