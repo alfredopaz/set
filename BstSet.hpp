@@ -1,12 +1,11 @@
-#ifndef TREE_SET_HPP
-#define TREE_SET_HPP
+#ifndef BST_SET_HPP
+#define BST_SET_HPP
 
-#include "ISet.hpp"
 #include <cassert>
 #include <memory>
 
 template <class T>
-class BstSet : public ISet<T> {
+class BstSet {
   struct Node {
     T val;
     std::unique_ptr<Node> left;
@@ -17,7 +16,7 @@ class BstSet : public ISet<T> {
   std::unique_ptr<Node> root;
 
 public:
-  virtual void insert(const T& value) override {
+  void insert(const T& value) {
     // sometimes raw pointers to pointers are truly inevitable
     auto* p_current = &root;
     while (*p_current)
@@ -31,7 +30,7 @@ public:
     *p_current = std::make_unique<Node>(value);
   }
 
-  virtual void remove(const T& value) override {
+  void erase(const T& value) {
     // yuck
     auto* p_current = &root;
     while (*p_current)
@@ -74,7 +73,7 @@ public:
     }
   }
 
-  virtual bool contains(const T& value) const override {
+  bool contains(const T& value) const {
     auto current = root.get();
     while (current)
       if (value < current->val)
@@ -86,7 +85,7 @@ public:
     return false;
   }
 
-  virtual bool isEmpty() const override {
+  bool empty() const {
     return !root;
   }
 };

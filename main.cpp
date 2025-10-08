@@ -1,22 +1,18 @@
 #include "ArraySet.hpp"
 #include "BstSet.hpp"
-#include "ISet.hpp"
+#include "Set.hpp"
 #include "StaticSet.hpp"
 #include <cassert>
 #include <iostream>
-#include <type_traits>
+#include <set>
 
-template <class T>
+template <Set<int> T>
 void test() {
-  // Compile time check, SFINAE isn't cool kids, but until C++ 20 there isn't
-  // anything better (search for C++ concepts)
-  static_assert(std::is_base_of<ISet<int>, T>::value, "T must implement ISet");
-
   // A1: in(init(), x) == false
   {
     T s;
     std::cout << "A1: conjunto recién creado debe estar vacío...\n";
-    assert(s.isEmpty());
+    assert(s.empty());
     assert(!s.contains(10));
   }
 
@@ -36,26 +32,26 @@ void test() {
     s.insert(4);
     s.insert(4); // duplicado
     assert(s.contains(4));
-    s.remove(4);
-    assert(s.isEmpty());
+    s.erase(4);
+    assert(s.empty());
   }
 
-  // A4: in(remove(S, x), x) == false
+  // A4: in(erase(S, x), x) == false
   {
     T s;
     std::cout << "A4: eliminar un elemento lo hace no perteneciente...\n";
     s.insert(3);
-    s.remove(3);
+    s.erase(3);
     assert(!s.contains(3));
   }
 
-  // A7: remove(init(), x) == init()
+  // A7: erase(init(), x) == init()
   {
     T s;
     std::cout << "A7: eliminar en conjunto vacío no altera el estado...\n";
-    assert(s.isEmpty());
-    s.remove(9);
-    assert(s.isEmpty());
+    assert(s.empty());
+    s.erase(9);
+    assert(s.empty());
   }
 
   // Secuencia combinada (integración de varios axiomas)
@@ -65,8 +61,8 @@ void test() {
     s.insert(1); // A2
     s.insert(1); // A8
     s.insert(2);
-    s.remove(1); // A4
-    s.remove(3); // A7
+    s.erase(1); // A4
+    s.erase(3); // A7
     assert(!s.contains(1));
     assert(s.contains(2));
   }
@@ -87,6 +83,10 @@ int main() {
   std::cout << "Pruebas del TDA Set (BstSet)\n";
   std::cout << "--------------------------------\n";
   test<BstSet<int>>();
+
+  std::cout << "Pruebas del TDA Set (std::set)\n";
+  std::cout << "--------------------------------\n";
+  test<std::set<int>>();
 
   return 0;
 }

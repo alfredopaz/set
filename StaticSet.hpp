@@ -1,13 +1,12 @@
 #ifndef STATIC_SET_HPP
 #define STATIC_SET_HPP
 
-#include "ISet.hpp"
 #include <algorithm>
 #include <cassert>
 
 // Like ArraySet, but lives on the stack
 template <class T, std::size_t N>
-class StaticSet : public ISet<T> {
+class StaticSet {
   // unions don't call constructors or destructors manually
   // we use this to reserve and align the right amount of memory
   // there are other ways to do this (e.g. std::aligned_storage )
@@ -20,13 +19,13 @@ class StaticSet : public ISet<T> {
 
 public:
   StaticSet() : length(0) {}
-  virtual ~StaticSet() override {
+  ~StaticSet() {
     for (int i = 0; i < length; ++i)
       // manual destructor call
       data[i].~T();
   }
 
-  virtual void insert(const T& value) override {
+  void insert(const T& value) {
     if (contains(value))
       return;
     assert(length < N);
@@ -34,7 +33,7 @@ public:
     new (&data[length++]) T(value);
   }
 
-  virtual void remove(const T& value) override {
+  void erase(const T& value) {
     int idx = -1;
     for (int i = 0; i < length; ++i)
       if (data[i] == value) {
@@ -50,14 +49,14 @@ public:
     data[--length].~T();
   }
 
-  virtual bool contains(const T& value) const override {
+  bool contains(const T& value) const {
     for (int i = 0; i < length; ++i)
       if (data[i] == value)
         return true;
     return false;
   }
 
-  virtual bool isEmpty() const override {
+  bool empty() const {
     return length == 0;
   }
 };

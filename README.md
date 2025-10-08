@@ -24,7 +24,7 @@ Un conjunto (`Set`) es un tipo abstracto que cumple con las siguientes operacion
 |------------|--------|-------------|
 | `init`     | → Set | conjunto vacío |
 | `insert`   | Set × Int → Set | inserta un elemento |
-| `remove`   | Set × Int → Set | elimina un elemento |
+| `erase`   | Set × Int → Set | elimina un elemento |
 | `in`       | Set × Int → Bool | determina si un elemento pertenece |
 | `isEmpty`  | Set → Bool | indica si el conjunto está vacío |
 
@@ -37,15 +37,15 @@ Un conjunto (`Set`) es un tipo abstracto que cumple con las siguientes operacion
 3. **Idempotencia:**  
    `insert(insert(S, x), x) = insert(S, x)`
 4. **Eliminación:**  
-   `in(remove(S, x), x) = false`
+   `in(erase(S, x), x) = false`
 5. **Eliminar en vacío:**  
-   `remove(init(), x) = init()`
+   `erase(init(), x) = init()`
 6. **Eliminar tras insertar:**  
-   `remove(insert(S, x), x) = S`
+   `erase(insert(S, x), x) = S`
 7. **Inserción no afecta a otros elementos:**  
    `y ≠ x ⇒ in(insert(S, x), y) = in(S, y)`
 8. **Eliminación no afecta a otros elementos:**  
-   `y ≠ x ⇒ in(remove(S, x), y) = in(S, y)`
+   `y ≠ x ⇒ in(erase(S, x), y) = in(S, y)`
 
 Estos axiomas definen la **semántica matemática** del TDA Set, independientemente de su implementación concreta.
 
@@ -64,7 +64,7 @@ class ISet {
 public:
   virtual ~ISet() {}
   virtual void insert(int value) = 0;
-  virtual void remove(int value) = 0;
+  virtual void erase(int value) = 0;
   virtual bool contains(int value) const = 0;
   virtual bool isEmpty() const = 0;
 };
@@ -90,11 +90,11 @@ La implementación incluye `assert` que verifican los axiomas más relevantes:
 | A1 `in(init(), x) == false` | Constructor | Un conjunto recién creado está vacío |
 | A2 `in(insert(S, x), x) == true` | `insert()` | Tras insertar, el elemento pertenece |
 | A3 `insert(insert(S, x), x) == insert(S, x)` | `insert()` | Insertar un duplicado no cambia el conjunto |
-| A4 `in(remove(S, x), x) == false` | `remove()` | Tras eliminar, el elemento ya no pertenece |
-| A5 `remove(init(), x) == init()` | `remove()` | Eliminar en vacío no altera el conjunto |
-| A6 `remove(insert(S, x), x) == S` | `remove()` | Eliminar tras insertar restaura el conjunto |
+| A4 `in(erase(S, x), x) == false` | `erase()` | Tras eliminar, el elemento ya no pertenece |
+| A5 `erase(init(), x) == init()` | `erase()` | Eliminar en vacío no altera el conjunto |
+| A6 `erase(insert(S, x), x) == S` | `erase()` | Eliminar tras insertar restaura el conjunto |
 | A7 `y ≠ x ⇒ in(insert(S, x), y) = in(S, y)` | `insert()` | Insertar un elemento no afecta otros |
-| A8 `y ≠ x ⇒ in(remove(S, x), y) = in(S, y)` | `remove()` | Eliminar un elemento no afecta otros |
+| A8 `y ≠ x ⇒ in(erase(S, x), y) = in(S, y)` | `erase()` | Eliminar un elemento no afecta otros |
 
 Compilando con `-DNDEBUG`, todas las aserciones desaparecen,  
 dejando solo el comportamiento funcional.
