@@ -2,6 +2,8 @@
 #define ISET_H
 
 // As it stands, this interface can't work for move-only types
+// maybe add Iset::insert(T&&)
+// (move semantics are important yo)
 template <class T>
 struct ISet {
   virtual ~ISet() = default;
