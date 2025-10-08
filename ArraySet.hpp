@@ -4,9 +4,8 @@
 #include "ISet.hpp"
 #include <cassert>
 
-// this has much of the same problems as StaticSet, look there for more info
-
-// Versión template, definiciones "en línea" dentro de la clase.
+// this REALLY should just use a std::vector, doing things this way is dangerous
+// and error prone when you're not dealing with mere int's
 template <class T>
 class ArraySet : public ISet<T> {
   T* data;
