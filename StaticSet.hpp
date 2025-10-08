@@ -14,7 +14,7 @@ class StaticSet : public ISet<T> {
   std::size_t nextFree;
 
 public:
-  explicit StaticSet(std::size_t capacity) : nextFree(0) {}
+  explicit StaticSet() : nextFree(0) {}
   virtual ~StaticSet() override = default;
 
   virtual void insert(const T& value) override {

@@ -1,18 +1,13 @@
 #include "ArraySet.hpp"
+#include "StaticSet.hpp"
 #include <cassert>
 #include <iostream>
 
-void expectEmpty(const ArraySet<int>& s, const char* label) {
-  std::cerr << label << ": " << (s.isEmpty() ? "OK" : "ERROR") << "\n";
-}
-
-int main() {
-  std::cout << "Pruebas del TDA Set (ArraySet)\n";
-  std::cout << "--------------------------------\n";
-
+template <class Set>
+void test() {
   // A1: in(init(), x) == false
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout << "A1: conjunto recién creado debe estar vacío...\n";
     assert(s.isEmpty());
     assert(!s.contains(10));
@@ -20,7 +15,7 @@ int main() {
 
   // A2: in(insert(S, x), x) == true
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout << "A2: insertar un elemento debe hacerlo perteneciente...\n";
     s.insert(7);
     assert(s.contains(7));
@@ -28,7 +23,7 @@ int main() {
 
   // A8: insert(insert(S, x), x) == insert(S, x)
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout
       << "A8: insertar dos veces el mismo elemento no cambia el conjunto...\n";
     s.insert(4);
@@ -40,7 +35,7 @@ int main() {
 
   // A4: in(remove(S, x), x) == false
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout << "A4: eliminar un elemento lo hace no perteneciente...\n";
     s.insert(3);
     s.remove(3);
@@ -49,7 +44,7 @@ int main() {
 
   // A7: remove(init(), x) == init()
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout << "A7: eliminar en conjunto vacío no altera el estado...\n";
     assert(s.isEmpty());
     s.remove(9);
@@ -58,7 +53,7 @@ int main() {
 
   // Secuencia combinada (integración de varios axiomas)
   {
-    ArraySet<int> s(5);
+    Set s;
     std::cout << "Secuencia combinada: inserción, duplicado y eliminación...\n";
     s.insert(1); // A2
     s.insert(1); // A8
@@ -71,6 +66,16 @@ int main() {
 
   std::cout << "\nTodas las pruebas de axiomas superadas exitosamente.\n";
   std::cout << "--------------------------------\n";
+}
+
+int main() {
+  std::cout << "Pruebas del TDA Set (ArraySet)\n";
+  std::cout << "--------------------------------\n";
+  test<ArraySet<int>>();
+
+  std::cout << "Pruebas del TDA Set (StaticSet)\n";
+  std::cout << "--------------------------------\n";
+  test<StaticSet<int, 5>>();
 
   return 0;
 }

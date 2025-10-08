@@ -12,7 +12,7 @@ class ArraySet : public ISet<T> {
   int nextFree;
 
 public:
-  explicit ArraySet(std::size_t capacity) :
+  explicit ArraySet(std::size_t capacity = 5) :
     data(nullptr),
     cap(capacity),
     nextFree(0) {
