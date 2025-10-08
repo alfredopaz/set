@@ -1,4 +1,5 @@
 #include "ArraySet.hpp"
+#include "BstSet.hpp"
 #include "StaticSet.hpp"
 #include <cassert>
 #include <iostream>
@@ -76,6 +77,10 @@ int main() {
   std::cout << "Pruebas del TDA Set (StaticSet)\n";
   std::cout << "--------------------------------\n";
   test<StaticSet<int, 5>>();
+
+  std::cout << "Pruebas del TDA Set (BstSet)\n";
+  std::cout << "--------------------------------\n";
+  test<BstSet<int>>();
 
   return 0;
 }
