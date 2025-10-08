@@ -5,6 +5,8 @@
 #include <memory>
 #include <utility>
 
+// concept: used to assert at compile time that a type is able to be used in
+// certain contexts safely
 template <class S, class T>
 concept Set = requires(S& s, const T& t) {
   { s.insert(t) };
@@ -13,6 +15,8 @@ concept Set = requires(S& s, const T& t) {
   { std::as_const(s).empty() } -> std::same_as<bool>;
 };
 
+// a type polymophic erased class that allows you to use any type that satisfies
+// the Set<T> concept indiscriminately
 template <class T>
 class DynSet {
   struct VTable {
@@ -33,6 +37,7 @@ class DynSet {
   const VTable* v_table;
 
 public:
+  // here Set<T> is used instead of class to require that S is a Set of T
   template <Set<T> S, class... Args>
   DynSet(std::in_place_type_t<S>, Args&&... args) :
     set(

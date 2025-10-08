@@ -4,7 +4,9 @@
 #include "StaticSet.hpp"
 #include <cassert>
 #include <print>
+#include <ranges>
 #include <set>
+#include <string>
 #include <utility>
 
 template <Set<int> T, class... Args>
@@ -74,6 +76,7 @@ void test(Args&&... args) {
   std::println("--------------------------------");
 }
 
+// this tests DynSet polymorphic behaviour
 void dyn_test() {
   test<DynSet<int>>(std::in_place_type<StaticSet<int, 5>>);
   test<DynSet<int>>(std::in_place_type<ArraySet<int>>);
@@ -84,17 +87,31 @@ void dyn_test() {
     std::in_place_type<DynSet<int>>, std::in_place_type<BstSet<int>>
   );
 
+  // You can dynamically change what DynSet uses internally
+  // we start with an ArraySet
   DynSet<std::string> s = std::in_place_type<ArraySet<std::string>>;
   s.insert("hi");
+  // then we change to an std::set
   s = {std::in_place_type<std::set<std::string>>};
-  std::println("{}", s.empty());
+  assert(s.empty());
   s.insert("hiii");
-  std::println("{}", s.empty());
-  s = {std::in_place_type<ArraySet<std::string>>};
+  assert(!s.empty());
+  // and then to a StaticSet
+  s = {std::in_place_type<StaticSet<std::string, 10>>};
   for (auto&& e : {"alice", "bob", "mallory"})
     s.insert(e);
   for (auto&& e : {"alice", "bob", "mallory"})
     s.erase(e);
+  // we can even do this sort of cursed shenanigans if we are ready to face
+  // god's divine punishment (really slow performance)
+  s = {
+    std::in_place_type<DynSet<std::string>>,
+    std::in_place_type<BstSet<std::string>>
+  };
+  for (int i : std::views::iota(1, 10000))
+    s.insert(std::to_string(i));
+  assert(s.contains("5347"));
+  std::println("somehow DynSet worked correclty btw");
 }
 
 int main() {
@@ -115,5 +132,6 @@ int main() {
   std::println("--------------------------------");
   test<std::set<int>>();
 
+  dyn_test();
   return 0;
 }
