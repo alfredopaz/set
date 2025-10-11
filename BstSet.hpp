@@ -34,8 +34,9 @@ public:
   BstSet& operator=(const BstSet& other) {
     if (this == &other)
       return *this;
-    this->~BstSet();
-    return *new (this) BstSet(other);
+    root = other.root ? std::make_unique<Node>(*other.root) : nullptr;
+    cmp = other.cmp;
+    return *this;
   }
 
   void insert(const T& value) {
