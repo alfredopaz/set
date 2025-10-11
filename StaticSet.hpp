@@ -3,9 +3,12 @@
 
 #include <algorithm>
 #include <cassert>
+#include <concepts>
+#include <functional>
 
 // Like ArraySet, but lives on the stack
-template <class T, std::size_t N>
+template <class T, std::size_t N, class Eq = std::equal_to<T>>
+requires std::predicate<Eq, const T&, const T&>
 class StaticSet {
   // unions don't call constructors or destructors manually
   // we use this to reserve and align the right amount of memory
@@ -16,9 +19,11 @@ class StaticSet {
     T data[N];
   };
   std::size_t length;
+  Eq eq;
 
 public:
-  StaticSet() : length(0) {}
+  StaticSet() : StaticSet(Eq{}) {}
+  StaticSet(const Eq& _eq) : length(0), eq(_eq) {}
   ~StaticSet() {
     for (int i = 0; i < length; ++i)
       // manual destructor call
@@ -36,7 +41,7 @@ public:
   void erase(const T& value) {
     int idx = -1;
     for (int i = 0; i < length; ++i)
-      if (data[i] == value) {
+      if (eq(data[i], value)) {
         idx = i;
         break;
       }
@@ -51,7 +56,7 @@ public:
 
   bool contains(const T& value) const {
     for (int i = 0; i < length; ++i)
-      if (data[i] == value)
+      if (eq(data[i], value))
         return true;
     return false;
   }
