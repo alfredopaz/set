@@ -2,9 +2,12 @@
 #define BST_SET_HPP
 
 #include <cassert>
+#include <concepts>
+#include <functional>
 #include <memory>
 
-template <class T>
+template <class T, class Cmp = std::less<T>>
+requires std::predicate<Cmp, const T&, const T&>
 class BstSet {
   struct Node {
     T val;
@@ -14,15 +17,21 @@ class BstSet {
   };
 
   std::unique_ptr<Node> root;
+  Cmp cmp;
 
 public:
+  BstSet() : cmp({}) {}
+  BstSet(const Cmp& _cmp) : cmp(_cmp) {}
+  BstSet(BstSet&&) = default;
+  BstSet& operator=(BstSet&&) = default;
+
   void insert(const T& value) {
     // sometimes raw pointers to pointers are truly inevitable
     auto* p_current = &root;
     while (*p_current)
-      if (value < (*p_current)->val)
+      if (cmp(value, (*p_current)->val))
         p_current = &(*p_current)->left;
-      else if (value > (*p_current)->val)
+      else if (cmp((*p_current)->val, value))
         p_current = &(*p_current)->right;
       else
         return; // already here
@@ -34,9 +43,9 @@ public:
     // yuck
     auto* p_current = &root;
     while (*p_current)
-      if (value < p_current->get()->val)
+      if (cmp(value, p_current->get()->val))
         p_current = &p_current->get()->left;
-      else if (value > p_current->get()->val)
+      else if (cmp(p_current->get()->val, value))
         p_current = &p_current->get()->right;
       else
         break;
@@ -76,9 +85,9 @@ public:
   bool contains(const T& value) const {
     auto current = root.get();
     while (current)
-      if (value < current->val)
+      if (cmp(value, current->val))
         current = current->left.get();
-      else if (value > current->val)
+      else if (cmp(current->val, value))
         current = current->right.get();
       else
         return true;
