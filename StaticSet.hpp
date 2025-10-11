@@ -4,9 +4,10 @@
 #include "ISet.hpp"
 #include <algorithm>
 #include <cassert>
+#include <functional>
 
 // Like ArraySet, but lives on the stack
-template <class T, std::size_t N>
+template <class T, std::size_t N, class Eq = std::equal_to<T>>
 class StaticSet : public ISet<T> {
   // unions don't call constructors or destructors manually
   // we use this to reserve and align the right amount of memory
@@ -17,9 +18,10 @@ class StaticSet : public ISet<T> {
     T data[N];
   };
   std::size_t length;
+  Eq eq;
 
 public:
-  StaticSet() : length(0) {}
+  StaticSet(const Eq& _eq = {}) : length(0), eq(_eq) {}
   virtual ~StaticSet() override {
     for (int i = 0; i < length; ++i)
       // manual destructor call
@@ -37,7 +39,7 @@ public:
   virtual void remove(const T& value) override {
     int idx = -1;
     for (int i = 0; i < length; ++i)
-      if (data[i] == value) {
+      if (eq(data[i], value)) {
         idx = i;
         break;
       }
@@ -52,7 +54,7 @@ public:
 
   virtual bool contains(const T& value) const override {
     for (int i = 0; i < length; ++i)
-      if (data[i] == value)
+      if (eq(data[i], value))
         return true;
     return false;
   }

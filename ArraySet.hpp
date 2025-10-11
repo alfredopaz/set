@@ -3,20 +3,24 @@
 
 #include "ISet.hpp"
 #include <cassert>
+#include <functional>
 
 // this REALLY should just use a std::vector, doing things this way is dangerous
 // and error prone when you're not dealing with mere int's
-template <class T>
+template <class T, class Eq = std::equal_to<T>>
 class ArraySet : public ISet<T> {
   T* data;
   std::size_t cap;
   int nextFree;
+  Eq eq;
 
 public:
-  explicit ArraySet(std::size_t capacity = 5) :
+  explicit ArraySet(const Eq& _eq = {}) : ArraySet(5, _eq) {}
+  explicit ArraySet(std::size_t capacity, const Eq& _eq = {}) :
     data(nullptr),
     cap(capacity),
-    nextFree(0) {
+    nextFree(0),
+    eq(_eq) {
     assert(cap > 0);
     data = new T[cap];
   }
@@ -35,7 +39,7 @@ public:
   virtual void remove(const T& value) override {
     int idx = -1;
     for (int i = 0; i < nextFree; ++i)
-      if (data[i] == value) {
+      if (eq(data[i], value)) {
         idx = i;
         break;
       }
@@ -50,7 +54,7 @@ public:
 
   virtual bool contains(const T& value) const override {
     for (int i = 0; i < nextFree; ++i)
-      if (data[i] == value)
+      if (eq(data[i], value))
         return true;
 
     return false;
