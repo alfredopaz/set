@@ -5,6 +5,7 @@
 #include <cassert>
 #include <concepts>
 #include <functional>
+#include <memory>
 
 // Like ArraySet, but lives on the stack
 template <class T, std::size_t N, class Eq = std::equal_to<T>>
@@ -24,45 +25,73 @@ class StaticSet {
 public:
   StaticSet() : StaticSet(Eq{}) {}
   StaticSet(const Eq& _eq) : length(0), eq(_eq) {}
+  StaticSet(const StaticSet& other) : length(other.length), eq(other.eq) {
+    for (std::size_t i = 0; i < other.length; ++i)
+      std::construct_at(&data[i], other.data[i]);
+  }
+  StaticSet(StaticSet&& other) : length(other.length), eq(std::move(other.eq)) {
+    for (std::size_t i = 0; i < other.length; ++i)
+      std::construct_at(&data[i], std::move(other.data[i]));
+    other.clear();
+  }
+  StaticSet& operator=(const StaticSet& other) {
+    if (this == &other)
+      return *this;
+    this->~StaticSet();
+    return *std::construct_at(this, other);
+  }
+  StaticSet& operator=(StaticSet&& other) {
+    if (this == &other)
+      return *this;
+    this->~StaticSet();
+    return *std::construct_at(this, std::move(other));
+  }
   ~StaticSet() {
-    for (int i = 0; i < length; ++i)
-      // manual destructor call
-      data[i].~T();
+    clear();
   }
 
   void insert(const T& value) {
     if (contains(value))
       return;
     assert(length < N);
-    // placement new (manual initialization)
-    new (&data[length++]) T(value);
+    // manual initialization
+    std::construct_at(&data[length++], value);
   }
 
   void erase(const T& value) {
-    int idx = -1;
-    for (int i = 0; i < length; ++i)
+    std::size_t idx = N;
+    for (std::size_t i = 0; i < length; ++i)
       if (eq(data[i], value)) {
         idx = i;
         break;
       }
 
-    if (idx < 0)
+    if (idx == N)
       return;
-    for (int i = idx + 1; i < length; ++i)
+    for (std::size_t i = idx + 1; i < length; ++i)
       // prefer move assignment
       data[i - 1] = std::move(data[i]);
     data[--length].~T();
   }
 
   bool contains(const T& value) const {
-    for (int i = 0; i < length; ++i)
+    for (std::size_t i = 0; i < length; ++i)
       if (eq(data[i], value))
         return true;
     return false;
   }
 
+  std::size_t size() const {
+    return length;
+  }
+
   bool empty() const {
     return length == 0;
+  }
+
+  void clear() {
+    std::destroy_n(data, length);
+    length = 0;
   }
 };
 
