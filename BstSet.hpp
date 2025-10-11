@@ -14,6 +14,10 @@ class BstSet {
     std::unique_ptr<Node> left;
     std::unique_ptr<Node> right;
     explicit Node(const T& v) : val(v) {}
+    Node(const Node& other) :
+      val(other.val),
+      left(other.left ? std::make_unique<Node>(*other.left) : nullptr),
+      right(other.right ? std::make_unique<Node>(*other.right) : nullptr) {}
   };
 
   std::unique_ptr<Node> root;
@@ -24,6 +28,15 @@ public:
   BstSet(const Cmp& _cmp) : cmp(_cmp) {}
   BstSet(BstSet&&) = default;
   BstSet& operator=(BstSet&&) = default;
+  BstSet(const BstSet& other) :
+    root(other.root ? std::make_unique<Node>(*other.root) : nullptr),
+    cmp(other.cmp) {}
+  BstSet& operator=(const BstSet& other) {
+    if (this == &other)
+      return *this;
+    this->~BstSet();
+    return *new (this) BstSet(other);
+  }
 
   void insert(const T& value) {
     // sometimes raw pointers to pointers are truly inevitable
